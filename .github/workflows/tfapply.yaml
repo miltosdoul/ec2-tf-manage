@@ -1,0 +1,124 @@
+name: Deploy Infrastructure
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry-run:
+        type: boolean
+        default: false
+        description: "Set to true to skip deployment"
+
+# variables for terraform
+env:
+  TF_VAR_aws_account_id: ${{ secrets.AWS_ACCOUNT_ID }}
+  TF_VAR_aws_terraform_role: ${{ secrets.AWS_TERRAFORM_ROLE }}
+  TF_VAR_aws_region: ${{ secrets.AWS_REGION }}
+
+jobs:
+  tf-plan:
+    name: Lint and plan
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      tf-plan-exit-code: ${{ steps.tf-plan.outputs.exitcode }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      
+      - name: Configure AWS creds
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{ secrets.AWS_TERRAFORM_ROLE }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: "1.7.0"
+
+      - name: Terraform Init
+        run: terraform init
+  
+      - name: Terraform Validate
+        run: terraform validate
+  
+      - name: Terraform Format
+        run: terraform fmt -check -recursive
+
+      - uses: terraform-linters/setup-tflint@v4
+        name: Setup TFLint
+        with:
+          tflint_version: "v0.54.0"
+  
+      - name: Init TFLint
+        run: tflint --init
+        env:
+          # https://github.com/terraform-linters/tflint/blob/master/docs/user-guide/plugins.md#avoiding-rate-limiting
+          GITHUB_TOKEN: ${{ github.token }}
+  
+      - name: Run TFLint
+        id: lint
+        run: tflint -f compact
+
+      - name: Check lint output
+        run: echo "Skipping evaluation of lint output"
+
+      - name: Terraform Plan
+        id: tf-plan
+        run: |
+          export exitcode=0
+          terraform plan -detailed-exitcode -no-color -out tfplan || export exitcode=$?
+  
+          echo "exitcode=${exitcode}" >> $GITHUB_OUTPUT
+          
+          if [ $exitcode -eq 1 ]; then
+            echo Terraform Plan Failed!
+            exit 1
+          else 
+            exit 0
+          fi
+
+      - name: Publish Terraform Plan
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfplan
+          path: tfplan
+
+      - name: Create Plan summary
+        run: |
+          TERRAFORM_PLAN=$(terraform show -no-color tfplan)
+          delimiter="$(openssl rand -hex 8)"
+
+          echo "summary<<${delimiter}" >> $GITHUB_STEP_SUMMARY
+          echo "## Terraform Plan Output" >> $GITHUB_STEP_SUMMARY
+          echo "<details><summary>Click to expand</summary>" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo '```terraform' >> $GITHUB_STEP_SUMMARY
+          echo "$TERRAFORM_PLAN" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo "</details>" >> $GITHUB_STEP_SUMMARY
+          echo "${delimiter}" >> $GITHUB_STEP_SUMMARY
+
+  tf-apply:
+    name: Apply plan
+    runs-on: ubuntu-latest
+    needs: tf-plan
+    if: ${{ inputs.dry-run == false && needs.tf-plan.outputs.tf-plan-exit-code == 2 }}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+        
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+        
+    - name: Terraform Init
+      run: terraform init
+        
+    - name: Download Terraform Plan
+      uses: actions/download-artifact@v3
+      with:
+        name: tfplan
+        
+    - name: Terraform Apply
+      run: terraform apply -auto-approve tfplan
