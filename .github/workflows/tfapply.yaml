@@ -43,7 +43,7 @@ jobs:
           terraform_version: "1.7.0"
 
       - name: Terraform Init
-        run: terraform init
+        run: terraform init -lockfile=readonly
   
       - name: Terraform Validate
         run: terraform validate
@@ -126,7 +126,7 @@ jobs:
         terraform_version: "1.7.0"
         
     - name: Terraform Init
-      run: terraform init
+      run: terraform init -lockfile=readonly
         
     - name: Download Terraform Plan
       uses: actions/download-artifact@v4
