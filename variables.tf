@@ -1,5 +1,5 @@
 variable "ami_name_regex" {
   description = "The name filter for AMI"
   type        = string
-  default     = "Ubuntu Server 24.04 LTS*"
+  default     = "ubuntu-noble-24.04-amd64*"
 }
