@@ -1,4 +1,4 @@
-name: Teardowm Infrastructure
+name: Teardown Infrastructure
 
 on: workflow_dispatch
 
@@ -38,4 +38,4 @@ jobs:
         run: terraform init -lockfile=readonly
 
       - name: Terraform Destroy
-        run: terraform destroy
+        run: terraform destroy -auto-approve
