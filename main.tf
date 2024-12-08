@@ -56,7 +56,7 @@ resource "aws_instance" "ec2-instance" {
   instance_type = "t2.micro"
 
   associate_public_ip_address = true
-  security_groups             = [aws_security_group.allow_ssh.id, aws_security_group.allow_all_egress.id]
+  vpc_security_group_ids      = [aws_security_group.allow_ssh.id, aws_security_group.allow_all_egress.id]
 
   tags = {
     Name = "main_instance"
