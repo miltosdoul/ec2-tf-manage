@@ -6,7 +6,11 @@ on:
       dry-run:
         type: boolean
         default: false
-        description: "Set to true to skip deployment"
+        description: "Dry run (skip deployment)"
+
+permissions:
+  contents: read
+  id-token: write # Required for aws-credentials setup
 
 # variables for terraform
 env:
@@ -21,9 +25,6 @@ jobs:
   tf-plan:
     name: Lint and plan
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write # Required for aws-credentials setup
     outputs:
       tf-plan-exit-code: ${{ steps.tf-plan.outputs.exitcode }}
     steps:
