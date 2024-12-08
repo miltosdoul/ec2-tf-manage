@@ -1,0 +1,41 @@
+name: Teardowm Infrastructure
+
+on: workflow_dispatch
+
+permissions:
+  contents: read
+  id-token: write # Required for aws-credentials setup
+
+# variables for terraform
+env:
+  TF_VAR_aws_account_id: ${{ secrets.AWS_ACCOUNT_ID }}
+  TF_VAR_aws_terraform_role: ${{ secrets.AWS_TERRAFORM_ROLE }}
+  # https://developer.hashicorp.com/terraform/language/backend/s3#credentials-and-shared-configuration
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  # https://developer.hashicorp.com/terraform/language/backend/s3#assume-role-with-web-identity-configuration
+  AWS_ROLE_ARN: "arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{ secrets.AWS_TERRAFORM_ROLE }}"
+
+jobs:
+  tf-destroy:
+    name: Teardown infrastructure
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      
+      - name: Configure AWS creds
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{ secrets.AWS_TERRAFORM_ROLE }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.7.0"
+
+      - name: Terraform Init
+        run: terraform init -lockfile=readonly
+
+      - name: Terraform Destroy
+        run: terraform destroy
