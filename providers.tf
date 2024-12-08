@@ -8,6 +8,6 @@ terraform {
   required_version = ">= 1.1.0"
 }
 
-provider "aws" {
-  region = var.aws_region
-}
+# uses AWS_REGION env var
+# https://developer.hashicorp.com/terraform/language/backend/s3#credentials-and-shared-configuration
+provider "aws" {}
