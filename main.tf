@@ -4,7 +4,7 @@ data "aws_ami" "ubuntu" {
 
   filter {
     name   = "architecture"
-    values = ["x86"]
+    values = ["x86_64"]
   }
 
   filter {
