@@ -130,4 +130,6 @@ jobs:
       uses: actions/download-artifact@v4
         
     - name: Terraform Apply
-      run: terraform apply -auto-approve tfplan
+      run: |
+        cd tfplan
+        terraform apply -auto-approve tfplan
