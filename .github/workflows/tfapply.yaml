@@ -127,9 +127,7 @@ jobs:
       run: terraform init
         
     - name: Download Terraform Plan
-      uses: actions/download-artifact@v3
-      with:
-        name: tfplan
+      uses: actions/download-artifact@v4
         
     - name: Terraform Apply
       run: terraform apply -auto-approve tfplan
