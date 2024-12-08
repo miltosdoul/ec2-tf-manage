@@ -26,6 +26,8 @@ resource "aws_security_group" "allow_ssh" {
 
 resource "aws_vpc_security_group_ingress_rule" "allow_ssh" {
   security_group_id = aws_security_group.allow_ssh.id
+
+  cidr_ipv4 = "0.0.0.0/0"
   from_port         = 22
   to_port           = 22
   ip_protocol       = "tcp"
@@ -53,7 +55,7 @@ resource "aws_instance" "ec2-instance" {
   ami                         = data.aws_ami.ubuntu.id
   instance_type               = "t2.micro"
 
-  associate_public_ip_address = yes
+  associate_public_ip_address = true
   security_groups = [ aws_security_group.allow_ssh.id, aws_security_group.allow_all_egress.id ]
 
   tags = {
