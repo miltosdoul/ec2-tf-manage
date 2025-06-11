@@ -1,3 +1,6 @@
 .idea/
 .terraform/
 ansible/inventory
+.vault_pass
+*.pem
+*.sh

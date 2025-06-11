@@ -7,7 +7,20 @@ resource "local_file" "ansible_inventory" {
   depends_on = [aws_instance.ec2-instance]
 }
 
-// Do healthcheck on instance and then run ansible command
+# Required for ansible command
+# No triggers_replace so it runs every time
+resource "terraform_data" "setup_known_hosts" {
+  provisioner "local-exec" {
+    command = <<-EOT
+      mkdir -p ~/.ssh
+      ssh-keyscan -H ${aws_instance.ec2-instance.public_ip} >> ~/.ssh/known_hosts
+    EOT
+  }
+
+  depends_on = [aws_instance.ec2-instance]
+}
+
+# Do healthcheck on instance and then run ansible command
 resource "terraform_data" "ansible" {
   provisioner "remote-exec" {
     connection {
@@ -24,5 +37,5 @@ resource "terraform_data" "ansible" {
     }
   }
 
-  depends_on = [aws_instance.ec2-instance, local_file.ansible_inventory]
+  depends_on = [aws_instance.ec2-instance, local_file.ansible_inventory, terraform_data.setup_known_hosts]
 }
