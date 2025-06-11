@@ -5,7 +5,7 @@ terraform {
       version = "5.80.0"
     }
     local = {
-      source = "registry.terraform.io/hashicorp/local"
+      source  = "registry.terraform.io/hashicorp/local"
       version = "2.5.3"
     }
   }
