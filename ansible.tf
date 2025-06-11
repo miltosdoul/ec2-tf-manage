@@ -19,6 +19,9 @@ resource "terraform_data" "ansible" {
   }
   provisioner "local-exec" {
     command = "ansible-playbook -vvvvv -i ${path.root}/ansible/inventory ${path.root}/ansible/playbook.yml --vault-password-file ${path.root}/.vault_pass"
+    environment = {
+      ANSIBLE_CONFIG = "${path.root}/ansible/ansible.cfg"
+    }
   }
 
   depends_on = [aws_instance.ec2-instance, local_file.ansible_inventory]
