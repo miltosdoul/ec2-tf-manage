@@ -132,7 +132,7 @@ jobs:
       run: terraform init -lockfile=readonly
     
     - name: Create key file and vault password file
-      run: --
+      run: |
         touch ansible.pem | echo "$TF_VAR_ssh_private_key" > ansible.pem
         echo "${{ secrets.ANSIBLE_VAULT_PASS }}" > .vault_pass
         
