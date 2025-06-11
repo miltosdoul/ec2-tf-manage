@@ -1,9 +1,51 @@
 ---
-
 - hosts: all
   become: true
   tasks:
-
-  - name: test
+  - name: Install fail2ban
     apt:
+      name: fail2ban
+      state: latest
       update_cache: yes
+
+  - name: Install Nginx
+    apt:
+      name: nginx
+      state: latest
+      update_cache: yes
+  
+  - name: Create root directory
+    file:
+      path: /home/{{ ansible_user }}/www
+      state: directory
+      mode: '0755'
+  
+  - name: Copy website
+    copy:
+      src: '{{ playbook_dir }}/../static/index.html'
+      dest: /home/{{ ansible_user }}/www/
+
+  - name: Remove default nginx configuration
+    file:
+      path: /etc/nginx/sites-enabled/default
+      state: absent
+
+  - name: Add nginx configuration
+    copy:
+      src: '{{ playbook_dir }}/../nginx/website.conf'
+      dest: '/etc/nginx/sites-available/'
+      owner: "{{ ansible_user }}"
+      group: root
+      mode: '0644'
+
+  - name: Enable website configuration
+    file:
+      src: /etc/nginx/sites-available/website.conf
+      dest: /etc/nginx/sites-enabled/website.conf
+      state: link
+
+  - name: Restart nginx
+    ansible.builtin.systemd_service:
+      state: restarted
+      daemon_reload: true
+      name: nginx

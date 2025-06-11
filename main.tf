@@ -33,6 +33,24 @@ resource "aws_vpc_security_group_ingress_rule" "allow_ssh" {
   ip_protocol = "tcp"
 }
 
+resource "aws_security_group" "allow_http" {
+  name        = "allow_http"
+  description = "Allow inbound HTTP traffic"
+
+  tags = {
+    Name = "allow_http"
+  }
+}
+
+resource "aws_vpc_security_group_ingress_rule" "allow_http" {
+  security_group_id = aws_security_group.allow_http.id
+
+  cidr_ipv4   = "0.0.0.0/0"
+  from_port   = 80
+  to_port     = 80
+  ip_protocol = "tcp"
+}
+
 resource "aws_security_group" "allow_all_egress" {
   name        = "allow_all_egress"
   description = "Allow all egress traffic from all protocols"
@@ -59,7 +77,7 @@ resource "aws_instance" "ec2-instance" {
   instance_type = "t2.micro"
 
   associate_public_ip_address = true
-  vpc_security_group_ids      = [aws_security_group.allow_ssh.id, aws_security_group.allow_all_egress.id]
+  vpc_security_group_ids      = [aws_security_group.allow_ssh.id, aws_security_group.allow_http.id, aws_security_group.allow_all_egress.id]
 
   key_name = aws_key_pair.ssh_key.key_name
 
