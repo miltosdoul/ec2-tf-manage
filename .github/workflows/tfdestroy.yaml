@@ -10,6 +10,9 @@ permissions:
 env:
   TF_VAR_aws_account_id: ${{ secrets.AWS_ACCOUNT_ID }}
   TF_VAR_aws_terraform_role: ${{ secrets.AWS_TERRAFORM_ROLE }}
+  TF_VAR_ssh_private_key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+  TF_VAR_ssh_public_key: ${{ secrets.EC2_SSH_PUBLIC_KEY }}
+  TF_VAR_ansible_user_password: ${{ secrets.ANSIBLE_USER_PASS }}
   # https://developer.hashicorp.com/terraform/language/backend/s3#credentials-and-shared-configuration
   AWS_REGION: ${{ secrets.AWS_REGION }}
   # https://developer.hashicorp.com/terraform/language/backend/s3#assume-role-with-web-identity-configuration
