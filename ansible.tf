@@ -38,4 +38,7 @@ resource "terraform_data" "ansible" {
   }
 
   depends_on = [aws_instance.ec2-instance, local_file.ansible_inventory]
+  triggers_replace = [
+    local_file.ansible_inventory
+  ]
 }
