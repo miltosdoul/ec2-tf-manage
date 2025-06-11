@@ -16,6 +16,9 @@ permissions:
 env:
   TF_VAR_aws_account_id: ${{ secrets.AWS_ACCOUNT_ID }}
   TF_VAR_aws_terraform_role: ${{ secrets.AWS_TERRAFORM_ROLE }}
+  TF_VAR_ssh_private_key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+  TF_VAR_ssh_public_key: ${{ secrets.EC2_SSH_PUBLIC_KEY }}
+  TF_VAR_ansible_user_password: ${{ secrets.ANSIBLE_USER_PASS }}
   # https://developer.hashicorp.com/terraform/language/backend/s3#credentials-and-shared-configuration
   AWS_REGION: ${{ secrets.AWS_REGION }}
   # https://developer.hashicorp.com/terraform/language/backend/s3#assume-role-with-web-identity-configuration
@@ -40,7 +43,7 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: "1.7.0"
+          terraform_version: "1.7.1"
 
       - name: Terraform Init
         run: terraform init -lockfile=readonly
@@ -123,13 +126,21 @@ jobs:
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v3
       with:
-        terraform_version: "1.7.0"
+        terraform_version: "1.7.1"
         
     - name: Terraform Init
       run: terraform init -lockfile=readonly
+    
+    - name: Create key file and vault password file
+      run: --
+        touch ansible.pem | echo "$TF_VAR_ssh_private_key" > ansible.pem
+        echo "${{ secrets.ANSIBLE_VAULT_PASS }}" > .vault_pass
         
     - name: Download Terraform Plan
       uses: actions/download-artifact@v4
         
     - name: Terraform Apply
       run: terraform apply -auto-approve tfplan/tfplan
+    
+    - name: Clean
+      run: rm ansible.pem .vault_pass

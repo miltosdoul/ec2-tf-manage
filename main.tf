@@ -49,12 +49,36 @@ resource "aws_vpc_security_group_egress_rule" "allow_all_egress" {
   ip_protocol = "-1"
 }
 
+resource "aws_key_pair" "ssh_key" {
+  key_name   = "main-instance-ssh-key"
+  public_key = var.ssh_public_key
+}
+
 resource "aws_instance" "ec2-instance" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = "t2.micro"
 
   associate_public_ip_address = true
   vpc_security_group_ids      = [aws_security_group.allow_ssh.id, aws_security_group.allow_all_egress.id]
+
+  key_name = aws_key_pair.ssh_key
+
+  user_data = <<-EOF
+    #cloud-config
+    ssh_pwauth: false
+    users:
+      - name: ansible
+        groups: sudo
+        shell: /bin/bash
+        sudo: ['ALL=(ALL:ALL) ALL']
+        ssh_authorized_keys:
+          - ${var.ssh_public_key}
+        lock_passwd: false
+    chpasswd:
+      expire: false
+      users:
+      - {name: ansible, password: ${var.ansible_user_password}, type: text}
+  EOF
 
   tags = {
     Name = "main_instance"
