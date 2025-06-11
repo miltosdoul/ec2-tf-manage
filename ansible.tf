@@ -18,7 +18,7 @@ resource "terraform_data" "ansible" {
     inline = ["echo 'Hello world'"]
   }
   provisioner "local-exec" {
-    command = "ansible-playbook -vvvvv --timeout 180 -i ${path.root}/ansible/inventory ${path.root}/ansible/playbook.yml --vault-password-file ${path.root}/.vault_pass"
+    command = "ansible-playbook -vvvvv --timeout 180 -i ${path.root}/ansible/inventory ${path.root}/ansible/playbook.yml --vault-password-file ${path.root}/ansible/.vault_pass"
     environment = {
       ANSIBLE_CONFIG = "${path.root}/ansible/ansible.cfg"
     }
