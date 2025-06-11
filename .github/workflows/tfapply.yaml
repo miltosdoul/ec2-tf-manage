@@ -134,6 +134,7 @@ jobs:
     - name: Create key file and vault password file
       run: |
         echo "$TF_VAR_ssh_private_key" > ansible/ansible.pem
+        chmod 600 ansible/ansible.pem
         echo "${{ secrets.ANSIBLE_VAULT_PASS }}" > ansible/.vault_pass
         
     - name: Download Terraform Plan
