@@ -6,6 +6,7 @@ terraform {
     }
     local = {
       source = "registry.terraform.io/hashicorp/local"
+      version = "2.5.3"
     }
   }
   required_version = ">= 1.7.1"
