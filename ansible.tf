@@ -18,7 +18,7 @@ resource "terraform_data" "ansible" {
     inline = ["echo 'Hello world'"]
   }
   provisioner "local-exec" {
-    command = "ansible-playbook -i ${path.root}/ansible/inventory ${path.root}/ansible/playbook.yml --vault-password-file ${path.root}/.vault_pass"
+    command = "ansible-playbook -vvvvv -i ${path.root}/ansible/inventory ${path.root}/ansible/playbook.yml --vault-password-file ${path.root}/.vault_pass"
   }
 
   depends_on = [aws_instance.ec2-instance, local_file.ansible_inventory]
