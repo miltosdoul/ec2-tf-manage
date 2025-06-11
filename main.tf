@@ -61,7 +61,7 @@ resource "aws_instance" "ec2-instance" {
   associate_public_ip_address = true
   vpc_security_group_ids      = [aws_security_group.allow_ssh.id, aws_security_group.allow_all_egress.id]
 
-  key_name = aws_key_pair.ssh_key
+  key_name = aws_key_pair.ssh_key.key_name
 
   user_data = <<-EOF
     #cloud-config
