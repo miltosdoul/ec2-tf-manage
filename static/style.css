@@ -1,0 +1,245 @@
+@import url('https://fonts.googleapis.com/css2?family=Fragment+Mono:ital@0;1&display=swap');
+
+:root {
+  --text: rgb(46, 190, 46);
+  --main-underline-color: rgb(157, 255, 157);
+}
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Fragment Mono", Arial, Helvetica, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  box-sizing: border-box;
+  background-color: white;
+}
+
+a {
+  padding: 0;
+  margin: 0;
+  color: black;
+  
+  text-decoration: underline solid black;
+  text-decoration-thickness: 2px;
+  -webkit-text-decoration: underline dotted black;
+  -moz-text-decoration: underline dotted black;
+  font-size: 1.2rem;
+}
+
+a:hover {
+  text-decoration-color: var(--text);
+  -webkit-text-decoration-color: var(--text);
+  -moz-text-decoration-color: var(--text);
+}
+
+a.social {
+  font-size: 1.2rem;
+}
+
+.bold {
+  font-weight: 700;
+}
+
+h2 {
+  font-weight: 500;
+  font-size: 1.2rem;
+}
+
+h3 {
+  font-weight: 500;
+}
+
+main {
+  background-color: white;
+  height: max(calc(max-content), 100vh);
+  height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  outline: 2px dashed black;
+  min-width: 50vw;
+  max-width: 1000px;
+}
+
+#top-spacer {
+  height: min(5vw, 20px);
+  width: 100px;
+}
+
+.flex {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  
+  background:
+  repeating-linear-gradient(
+   225deg,
+    transparent,
+    transparent 15px,
+    #b9b9b9 15px,
+    #b9b9b9 17px
+  );
+}
+
+.content {
+  width: 80vw;
+  max-width: 1000px;
+  margin-top: min(5vw, 20px);
+}
+
+.content-element {
+  margin: 0 2rem 0 2rem;
+}
+
+details > * {
+  font-size: 1rem;
+}
+
+summary {
+  font-weight: bold;
+  font-size: 1.2rem;
+  user-select: none;
+}
+
+#projects-list {
+  list-style: inside;
+  list-style-type: "- ";
+}
+
+ul {
+  line-height: 1.5rem;
+}
+
+ul.bare {
+  list-style: none;
+}
+
+.spacer {
+  margin: 1rem 0 1rem 0;
+  width: 100%;
+  height: 2px;
+}
+
+.spacer.visible {
+  background-color: black;
+}
+
+.footer {
+  min-height: 10vh;
+  width: 80vw;
+  max-width: 1000px;
+}
+
+.footer > p, a {
+  font-size: 1rem;
+}
+
+.spacer.visible {
+  background-color: black;
+}
+
+@media screen and (max-width: 480px) {
+  body {
+    font-size: 1.5rem;
+  }
+
+  main {
+    height: 100%;
+  }
+
+  #top-spacer {
+    height: 0;
+  }
+
+  .spacer {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .spacer.visible {
+    
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    width: 90vw;
+  }
+
+  .content-element.title-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+
+  .content-element {
+    margin: 0 1rem 0 1rem;
+    width: 90%
+  }
+
+  .title > * {
+    text-align: center;
+  }
+
+  .title > h1 {
+    font-size: 3rem;
+  }
+
+  .title > h2 {
+    font-size: 1.8rem;
+  }
+
+  .social-section {
+    width: 80vw;
+    display: flex;
+    justify-content: space-evenly;
+    margin-top: 1rem;
+  }
+
+  a.social {
+    font-size: 1.7rem;
+  }
+
+  li > a {
+    font-size: 1.5rem;
+  }
+
+  details > * {
+    font-size: 1.7rem;
+  }
+
+  #projects-list {
+    font-size: 1.5rem;
+  }
+
+  .footer {
+    width: 90vw;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  .footer > p {
+    font-size: 1.2rem;
+  }
+
+  .footer > p > a {
+    font-size: 1.2rem;
+  }
+}
