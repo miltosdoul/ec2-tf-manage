@@ -16,14 +16,15 @@
   
   - name: Create root directory
     file:
-      path: /home/{{ ansible_user }}/www
+      path: /var/www/html
       state: directory
       mode: '0755'
   
   - name: Copy website
     copy:
       src: '{{ playbook_dir }}/../static/index.html'
-      dest: /home/{{ ansible_user }}/www/
+      dest: /var/www/html/
+      mode: '0644'
 
   - name: Remove default nginx configuration
     file:
