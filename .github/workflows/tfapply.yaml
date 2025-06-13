@@ -9,7 +9,7 @@ on:
         description: "Dry run (skip deployment)"
 
 permissions:
-  contents: read
+  contents: write
   id-token: write # Required for aws-credentials setup
 
 # variables for terraform
