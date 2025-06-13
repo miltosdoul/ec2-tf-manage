@@ -34,11 +34,11 @@ resource "aws_vpc_security_group_ingress_rule" "allow_ssh" {
 }
 
 resource "aws_security_group" "allow_cloudflare_http" {
-  name        = "allow_http"
+  name        = "allow_cloudflare_http"
   description = "Allow inbound HTTP traffic"
 
   tags = {
-    Name = "allow_http"
+    Name = "allow_cloudflare_http"
   }
 }
 
