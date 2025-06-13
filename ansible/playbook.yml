@@ -19,12 +19,17 @@
       path: /var/www/html
       state: directory
       mode: '0755'
+      owner: "{{ ansible_user }}"
+      group: "{{ ansible_user }}"
   
   - name: Copy website
     copy:
-      src: '{{ playbook_dir }}/../static/index.html'
+      src: '{{ playbook_dir }}/../static/{{ item }}'
       dest: /var/www/html/
       mode: '0644'
+    loop:
+      - index.html
+      - style.css
 
   - name: Remove default nginx configuration
     file:
